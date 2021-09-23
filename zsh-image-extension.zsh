@@ -11,19 +11,15 @@ IMAGE_EXTENSION_PREVIEW_KEY=${IMAGE_EXTENSION_PREVIEW_KEY:-'^X^O'}
 # default selection key: C-x C-i
 IMAGE_EXTENSION_SELECTION_KEY=${IMAGE_EXTENSION_SELECTION_KEY:-'^X^I'}
 
-# path to the w3mimgdisplay program (often provided by the w3m or w3m-img package)
-W3MIMGDISPLAY=/usr/lib/w3m/w3mimgdisplay
+IMAGE_EXTENSION_PREVIEW_SCRIPT="$IMAGE_EXTENSION_DIR/image-preview.py"
 
-# try enabling it if you use a compositing window manager or
-# experience some problems with previews
-IMAGE_EXTENSION_CLEAR_FALLBACK=0
-
-
+# use the system-wide if the bundled one is not available
+IMAGE_EXTENSION_SXIV=`whence sxiv`
+echo $IMAGE_EXTENSION_SXIV
 
 
 # if we have w3mimgdisplay available, enable the preview feature
-if [ -x "$W3MIMGDISPLAY" ]; then
-    IMAGE_EXTENSION_PREVIEW_SCRIPT="$IMAGE_EXTENSION_DIR/image-preview.py"
+if [ "$TERM" = "xterm-kitty" ]; then
     zsh-image-extension-preview-widget()
     {
         emulate -L zsh
@@ -48,32 +44,34 @@ if [ -x "$W3MIMGDISPLAY" ]; then
         emulate -L zsh
         local KEY
         local OUTPUT
-        while [ "$KEY" != 'q' ]; do
+        #while [ "$KEY" != 'q' ]; do
             local IFS=$'\n'
-            OUTPUT=(`"$IMAGE_EXTENSION_PREVIEW_SCRIPT" "$W3MIMGDISPLAY" "$@"`)
-            if [ "$?" != "0" ]; then
-                break
-            fi
+            #OUTPUT=(`"$IMAGE_EXTENSION_PREVIEW_SCRIPT" "$@"`)
+            #echo $OUTPUT
+            OUTPUT=(`kitty +kitten icat "$@"`)
+            #if [ "$?" != "0" ]; then
+                #break
+            #fi
             unset IFS
-            shift $OUTPUT[-1]
+            #shift $OUTPUT[-1]
 
-            "$W3MIMGDISPLAY" &> /dev/null <<EOF
-${(F)OUTPUT[1,-2]}
-EOF
+            #"$W3MIMGDISPLAY" &> /dev/null <<EOF
+#echo ${(F)OUTPUT[1,-2]}
+#EOF
 
-            read -s -k 1 KEY
-            if [ -n "$DISPLAY" -a "$IMAGE_EXTENSION_CLEAR_FALLBACK" != 1 ]; then
-                xrefresh -geometry $(xwininfo -id $WINDOWID | awk '
-/Absolute upper-left X:/ { x = $NF }
-/Absolute upper-left Y:/ { y = $NF }
-/Width:/                 { w = $NF }
-/Height:/                { h = $NF }
-END { printf "%sx%s+%s+%s", w,h,x,y }')
-            else
-                clear
-                zle && zle redisplay
-            fi
-        done
+            #read -s -k 1 KEY
+            #if [ -n "$DISPLAY" -a "$IMAGE_EXTENSION_CLEAR_FALLBACK" != 1 ]; then
+                #xrefresh -geometry $(xwininfo -id $WINDOWID | awk '
+#/Absolute upper-left X:/ { x = $NF }
+#/Absolute upper-left Y:/ { y = $NF }
+#/Width:/                 { w = $NF }
+#/Height:/                { h = $NF }
+#END { printf "%sx%s+%s+%s", w,h,x,y }')
+            #else
+                #clear
+                #zle && zle redisplay
+            #fi
+        #done
     }
     alias ils=zsh-image-extension-preview
 fi
@@ -82,15 +80,7 @@ fi
 
 
 
-if [ -x "$IMAGE_EXTENSION_DIR/sxiv" ]; then
-    # try to use the bundled sxiv
-    IMAGE_EXTENSION_SXIV="$IMAGE_EXTENSION_DIR/sxiv"
-else
-    # or the system-wide if the bundled one is not available
-    IMAGE_EXTENSION_SXIV=`whence sxiv`
-fi
-
-# if either sxiv is available, enable the selection feature
+# if sxiv is available, enable the selection feature
 if [ -x "$IMAGE_EXTENSION_SXIV" ]; then
     zsh-image-extension-selection-widget()
     {
