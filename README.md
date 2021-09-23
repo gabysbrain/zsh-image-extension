@@ -4,6 +4,10 @@ zsh-image-extension
 DESCRIPTION
 -----------
 
+This changes the preview to use kitty/icat rather than w3imagedisplay as in
+[vifon's](https://github.com/vifon/zsh-image-extension) original
+implementation.
+
 `zsh-image-extension` provides the image viewing capabilities to zsh. It allows
 previewing images listed on the command line and graphically selecting the
 images to append to it.
@@ -19,12 +23,6 @@ there are too many images to display, any key other than 'q' will display the
 next image portion.
 
 The preview function may be used as a regular command by running `ils` (image ls).
-
-May not work with all the terminals. Confirmed to work with `urxvt`, `xterm` and
-the Linux tty.
-
-It needs the `w3mimgdisplay` utility usually provided by `w3m` or `w3m-img`
-package.
 
 The activation sequence may be customized by setting the
 `IMAGE_EXTENSION_PREVIEW_KEY` variable prior to loading this plugin.
@@ -48,15 +46,6 @@ The activation sequence may be customized by setting the
 INSTALLATION
 ------------
 
-This method **will not work** if you do not have this plugin's Git repository
-downloaded. Use the method described in the next paragraph in that case or just
-download that repository.
-
-Run `make` to download the `sxiv` source and compile it, and then source
-(i.e. add the `source path/to/file` line to your `zshrc`) the
-`zsh-image-extension`. You can provide your own `config.h` and recompile `sxiv`
-(by running `make` again).
-
 If you have `sxiv` installed, you may omit the most of it and only source the
 `zsh-image-extension` file but I cannot guarantee your `sxiv`'s compatilibity (the
 first compatible commit -- `fb6e4bd`).
@@ -64,9 +53,8 @@ first compatible commit -- `fb6e4bd`).
 DEPENDENCIES
 ------------
 
-* `sxiv` (automatically provided) for image selection
-* `w3m` (`w3m-img` on Debian, Ubuntu, etc.) for image preview
-* `git` and `make` for automated `sxiv` download and compilation
+* `sxiv` for image selection
+* `kitty` for image preview
 
 KNOWN ISSUES AND TROUBLESHOOTING
 --------------------------------
@@ -88,19 +76,18 @@ It happens under the composing window managers. Enable the legacy
 clearing method in the `zsh-image-extension` file or set the
 `IMAGE_EXTENSION_CLEAR_FALLBACK` variable to 1.
 
-TODO
-----
-
-- a proper image clearing method working for tty and compositing window managers
-
 ACKNOWLEDGMENTS
 ---------------
+
+Thanks to [vifon](https://github.com/vifon/zsh-image-extension) for the 
+orignal implementation and most of the work!
 
 To list and select images I've used the excellent
 [sxiv](https://github.com/muennich/sxiv) image viewer written by Bert Muennich
 as it is great, small and hackable. ;)
 
-Image previewing is handled by the `w3mimgdisplay` utility provided by `w3m`.
+Image previewing is handled by the [`kitty`](https://sw.kovidgoyal.net/kitty/)
+terminal and the `icat` viewer.
 
 SEE ALSO
 --------
@@ -111,6 +98,8 @@ AUTHOR
 ------
 
 Wojciech 'vifon' Siewierski < wojciech dot siewierski at gmail dot com >
+
+Thomas Tornsey-Weir < torsneyt at gmail dot com >
 
 COPYRIGHT
 ---------
